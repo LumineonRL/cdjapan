@@ -1,0 +1,1 @@
+"C:\Program Files\R\R-4.2.2\bin\x64\R.exe" CMD BATCH scrape.R
