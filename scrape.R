@@ -44,18 +44,18 @@ for (i in seq_along(1L:length(search_term))) {
         "&order=newdesc")
 
     # Grabs the link to top search result.
-    newest_urls[i] <- read_html(base_url) |>
-        html_elements(xpath = "//*[@id=\"js-search-result\"]") |>
-        html_element(xpath = "//*[@class=\"item\"]") |>
-        html_element("a") |>
+    newest_urls[i] <- read_html(base_url) %>%
+        html_elements(xpath = "//*[@id=\"js-search-result\"]") %>%
+        html_element(xpath = "//*[@class=\"item\"]") %>%
+        html_element("a") %>%
         html_attr("href")
 }
 
-tibble(search_term_raw, old_urls, newest_urls, dates) |>
+tibble(search_term_raw, old_urls, newest_urls, dates) %>%
     mutate(dates = case_when(old_urls != newest_urls ~ as.character(today()),
-        TRUE ~ dates)) |>
-    dplyr::select(-old_urls) |>
-    set_names(c("search_term", "newest_item", "last_update")) |>
+        TRUE ~ dates)) %>%
+    dplyr::select(-old_urls) %>%
+    set_names(c("search_term", "newest_item", "last_update")) %>%
     dbWriteTable(db1, "newest_items", ., overwrite = TRUE)
 dbDisconnect(db1)
 
