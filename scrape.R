@@ -36,7 +36,7 @@ newest_urls <- rep(NA, length(search_term))
 # Give computer a little more time to establish internet connection.
 Sys.sleep(15)
 
-for (i in seq_along(1L, length(search_term))) {
+for (i in seq_along(1L:length(search_term))) {
     if (i > 1L) {
         Sys.sleep(4L)
     }
@@ -61,7 +61,7 @@ dbDisconnect(db1)
 
 # Open web page for any new new items.  Can probably rewrite this with an
 # apply.
-for (j in seq_along(1L, length(newest_urls))) {
+for (j in seq_along(1L:length(newest_urls))) {
     if (newest_urls[j] != old_urls[j]) {
         browseURL(newest_urls[j])
     }
