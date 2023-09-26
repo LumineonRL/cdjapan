@@ -59,10 +59,9 @@ tibble(search_term_raw, old_urls, newest_urls, dates) %>%
     dbWriteTable(db1, "newest_items", ., overwrite = TRUE)
 dbDisconnect(db1)
 
-# Open web page for any new new items.  Can probably rewrite this with an
-# apply.
-for (j in seq_along(1L:length(newest_urls))) {
-    if (newest_urls[j] != old_urls[j]) {
-        browseURL(newest_urls[j])
-    }
-}
+# Open web page for any new new items.
+lapply(seq_along(newest_urls), function(j) {
+  if (newest_urls[j] != old_urls[j]) {
+    browseURL(newest_urls[j])
+  }
+})
