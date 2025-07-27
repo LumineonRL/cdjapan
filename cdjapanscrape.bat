@@ -1,30 +1,33 @@
 @echo off
 
-:: Check for most recent R installation
-for /F "tokens=2*" %%A in (
-    'reg query "HKLM\SOFTWARE\R-core\R" /v InstallPath ^| findstr /i "InstallPath"'
-) do (
-    set RVersion=%%B
+ECHO Activating virtual environment...
+REM
+CALL venv/Scripts/activate
+
+if %errorlevel% neq 0 (
+    ECHO Failed to activate virtual environment. Make sure a 'venv' folder exists.
+    goto :end
 )
 
-:: Check if RVersion is set
-if not defined RVersion (
-    echo R is not installed.
-    exit /b
-)
+ECHO.
+ECHO Running the Python scraper (scrape.py)...
+python scrape.py
 
-:: Construct the R executable path based on the installation path
-set RExePath=%RVersion%\bin\x64\R.exe
-
-:: Run the R script
-"%RExePath%" CMD BATCH scrape.R
-
-:: Capture the exit code
 set ExitCode=%errorlevel%
 
-:: Write error to log
-if %ExitCode% equ 1 (
-    echo Task exited with code 1. Performing additional actions...
-    echo Additional actions performed at %date% %time% >> "%~dp0cdjapanerror.log"
-    start "" "%~dp0cdjapanerror.log"
+if %ExitCode% neq 0 (
+    echo.
+    echo **************************************************
+    echo * SCRIPT FAILED with exit code %ExitCode%. Please check logs. *
+    echo **************************************************
+    echo Run failed at %date% %time% with exit code %ExitCode%. >> "%~dp0log.log"
+    start "" "%~dp0log.log"
+) else (
+    echo.
+    echo Script completed successfully.
 )
+
+:end
+ECHO.
+ECHO Script finished. Press any key to exit.
+pause >nul
